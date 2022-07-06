@@ -7,7 +7,7 @@ class Post {
   final likes;
   final String postId;
   final DateTime datePublished;
-  final List postUrl;
+  final String postUrl;
   final String profImage;
 
   const Post({

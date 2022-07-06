@@ -175,34 +175,33 @@ class ProfileScreen extends StatelessWidget {
                                       child: Icon(Icons.error_outline));
                                 } else {
                                   return Center(
-                                      child: CircularProgressIndicator());
+                                      child:
+                                          CircularProgressIndicator.adaptive());
                                 }
                               }),
                         ),
                         Align(
                           alignment: Alignment.topLeft,
                           child: GestureDetector(
-                            onTap: () {
-                              pushNewScreen(
-                                context,
-                                screen: MyProfileScreen(),
-                                withNavBar:
-                                    false, // OPTIONAL VALUE. True by default.
-                                //pageTransitionAnimation: PageTransitionAnimation.cupertino,
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  shape: BoxShape.circle),
-                              child: Icon(
-                                Icons.edit_rounded,
-                                size: 24 * widthScale,
-                              ),
-                            ),
-                          ),
+                              onTap: () {
+                                pushNewScreen(
+                                  context,
+                                  screen: MyProfileScreen(),
+                                  withNavBar:
+                                      false, // OPTIONAL VALUE. True by default.
+                                  //pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                );
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      shape: BoxShape.circle),
+                                  child: Icon(
+                                    Icons.edit_rounded,
+                                    size: 24 * widthScale,
+                                  ))),
                         ),
                       ],
                     ),
@@ -216,14 +215,8 @@ class ProfileScreen extends StatelessWidget {
                         pushNewScreen(
                           context,
                           screen: CreatePostScreen(
-                            profImage: '',
-                            userName: '',
-                            // userName: ds.get("UserName") == null
-                            //     ? ""
-                            //     : ds.get("UserName"),
-                            // profImage: ds.get("imageLink") == null
-                            //     ? ""
-                            //     : ds.get("imageLink"),
+                            userName: ds.get("UserName"),
+                            profImage: ds.get("imageLink"),
                           ),
                           withNavBar: false, // OPTIONAL VALUE. True by default.
                           //pageTransitionAnimation: PageTransitionAnimation.cupertino,
@@ -231,97 +224,133 @@ class ProfileScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  CardContainer(
-                      paddingHorizontal: 8,
-                      paddingVertical: 15,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 12 * widthScale,
-                                right: 12 * widthScale,
-                                bottom: 12 * heightScale),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    ProfileImage(
-                                      radius: 17.5,
-                                      profileImg: firebaseAuth
-                                          .currentUser!.photoURL
-                                          .toString(),
-                                      onPress: () {},
-                                    ),
-                                    SizedBox(
-                                      width: 10 * widthScale,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Johanna, 22',
-                                          style: GoogleFonts.outfit(
-                                              fontSize: 15 * widthScale,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CreatePostScreen(
-                                          profImage: '',
-                                          userName: '',
-                                          // userName: ds.get("UserName") == null
-                                          //     ? ""
-                                          //     : ds.get("UserName"),
-                                          // profImage: ds.get("imageLink") == null
-                                          //     ? ""
-                                          //     : ds.get("imageLink"),
+                  SizedBox(
+                    height: 300,
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('posts')
+                            .where('uid',
+                                isEqualTo: firebaseAuth.currentUser!.uid)
+                            // .orderBy('datePublished', descending: true)
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                'Something went wrong',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 15 * widthScale,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          }
+
+                          // if (snapshot.connectionState ==
+                          //     ConnectionState.waiting) {
+
+                          // }
+
+                          if (snapshot.hasData) {
+                            return ListView.builder(
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                Map<String, dynamic> data =
+                                    snapshot.data!.docs[index].data()!
+                                        as Map<String, dynamic>;
+                                return CardContainer(
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 15,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 12 * widthScale,
+                                            right: 12 * widthScale,
+                                            bottom: 12 * heightScale),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                ProfileImage(
+                                                  radius: 17.5,
+                                                  profileImg: firebaseAuth
+                                                      .currentUser!.photoURL
+                                                      .toString(),
+                                                  onPress: () {},
+                                                ),
+                                                SizedBox(
+                                                  width: 10 * widthScale,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      data['username'],
+                                                      style: GoogleFonts.outfit(
+                                                          fontSize:
+                                                              15 * widthScale,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CreatePostScreen(
+                                                      userName:
+                                                          ds.get("UserName"),
+                                                      profImage:
+                                                          ds.get("imageLink"),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Icon(
+                                                Icons.edit_rounded,
+                                                size: 24 * widthScale,
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.edit_rounded,
-                                    size: 24 * widthScale,
+                                      PostImageSlider(
+                                        imgList: [data['postUrl']],
+                                        likeCount: data['likes'].length,
+                                        onLikeTap: () {},
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 11 * heightScale,
+                                            left: 10 * widthScale,
+                                            right: 10 * widthScale),
+                                        child: Text(
+                                          data['description'],
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 12 * widthScale,
+                                          ),
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                )
-                              ],
-                            ),
-                          ),
-                          PostImageSlider(
-                            imgList: [
-                              'images/dummy_post1.png',
-                              'images/dummy_post2.png'
-                            ],
-                            likeCount: 1500,
-                            onLikeTap: () {},
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: 11 * heightScale,
-                                left: 10 * widthScale,
-                                right: 10 * widthScale),
-                            child: Text(
-                              'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy'
-                              'eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam'
-                              'voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita'
-                              'kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
-                              'Lorem ipsum dolor sit amet, consetetur sadipscing elit.',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12 * widthScale,
-                              ),
-                            ),
-                          )
-                        ],
-                      )),
+                                );
+                              },
+                            );
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          );
+                        }),
+                  ),
                   SizedBox(
                     height: 36 * heightScale,
                   )

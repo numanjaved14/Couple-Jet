@@ -18,47 +18,79 @@ class FeedListItem extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 7*heightScale,left: 12*widthScale,right: 12*widthScale),
+              padding: EdgeInsets.only(
+                  top: 7 * heightScale,
+                  left: 12 * widthScale,
+                  right: 12 * widthScale),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       ProfileImage(
-                          radius: 17.5,
-                          profileImg: 'images/dummy_profile_img1.png',
-                          onPress: (){},
+                        radius: 17.5,
+                        profileImg:
+                            'https://awazpost.com/wp-content/uploads/2014/05/american-girls-screensavers.jpg',
+                        onPress: () {},
                       ),
-                      SizedBox(width: 10*widthScale,),
+                      SizedBox(
+                        width: 10 * widthScale,
+                      ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Johanna, 22',style: GoogleFonts.outfit(fontSize: 15*widthScale,fontWeight: FontWeight.bold),),
-                          Text('aus Düsseldorf, DE',style: GoogleFonts.outfit(fontSize: 10*widthScale,color: Theme.of(context).iconTheme.color!.withOpacity(0.7)))
+                          Text(
+                            'Johanna, 22',
+                            style: GoogleFonts.outfit(
+                                fontSize: 15 * widthScale,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text('aus Düsseldorf, DE',
+                              style: GoogleFonts.outfit(
+                                  fontSize: 10 * widthScale,
+                                  color: Theme.of(context)
+                                      .iconTheme
+                                      .color!
+                                      .withOpacity(0.7)))
                         ],
                       ),
                     ],
                   ),
-                  Icon(Icons.visibility_rounded,size: 24*widthScale,)
+                  Icon(
+                    Icons.visibility_rounded,
+                    size: 24 * widthScale,
+                  )
                 ],
               ),
             ),
-            SizedBox(height: 12*heightScale,),
+            SizedBox(
+              height: 12 * heightScale,
+            ),
             PostImageSlider(
-              imgList: ['images/dummy_post1.png','images/dummy_post2.png'],
+              imgList: [
+                'https://awazpost.com/wp-content/uploads/2014/05/american-girls-screensavers.jpg',
+                'https://images.unsplash.com/photo-1611880147493-7542bdb0f024?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YW1lcmljYW4lMjBnaXJsfGVufDB8fDB8fA%3D%3D&w=1000&q=80'
+              ],
               likeCount: 1500,
-              onLikeTap: (){},
+              onLikeTap: () {},
             ),
             Padding(
-              padding: EdgeInsets.only(top: 11*heightScale,left: 10*widthScale,right: 10*widthScale),
-              child: Text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy'
+              padding: EdgeInsets.only(
+                  top: 11 * heightScale,
+                  left: 10 * widthScale,
+                  right: 10 * widthScale),
+              child: Text(
+                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy'
                 'eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam'
                 'voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita'
                 'kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
-                'Lorem ipsum dolor sit amet, consetetur sadipscing elit.',style: GoogleFonts.outfit(fontSize: 12*widthScale,color: Theme.of(context).iconTheme.color!.withOpacity(0.7)),),
+                'Lorem ipsum dolor sit amet, consetetur sadipscing elit.',
+                style: GoogleFonts.outfit(
+                    fontSize: 12 * widthScale,
+                    color: Theme.of(context).iconTheme.color!.withOpacity(0.7)),
+              ),
             )
           ],
-        )
-    );
+        ));
   }
 }
