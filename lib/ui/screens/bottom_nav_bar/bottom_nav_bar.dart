@@ -1,10 +1,8 @@
-import 'package:couple_jet/ui/reusable/gradient_round_button.dart';
 import 'package:couple_jet/ui/screens/bottom_nav_bar/widgets/middle_button.dart';
 import 'package:couple_jet/ui/screens/chat_list_screen/chat_list_screen.dart';
 import 'package:couple_jet/ui/screens/feed_screen/feed_screen.dart';
 import 'package:couple_jet/ui/screens/main_card_screen/main_card_screen.dart';
 import 'package:couple_jet/utils/colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 

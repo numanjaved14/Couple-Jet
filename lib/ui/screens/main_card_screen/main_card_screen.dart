@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:couple_jet/ui/reusable/gradient_points_container.dart';
 import 'package:couple_jet/ui/reusable/gradient_round_button.dart';
 import 'package:couple_jet/ui/reusable/profile_image.dart';
 import 'package:couple_jet/ui/reusable/title_text.dart';
 import 'package:couple_jet/ui/screens/profile_screen/profile_screen.dart';
 import 'package:couple_jet/utils/colors.dart';
+import 'package:couple_jet/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -18,21 +20,25 @@ class MainCardSwiperScreen extends StatefulWidget {
 }
 
 class _MainCardSwiperScreenState extends State<MainCardSwiperScreen> {
-
   List<SwipeItem> _swipeItems = [];
   late MatchEngine matchEngine;
 
-  final imgList = ['images/dummy_card0.png','images/dumm_card1.png','images/dummy_card2.png','images/dummy_card3.png','images/dummy_profile.png'];
+  final imgList = [
+    'images/dummy_card0.png',
+    'images/dumm_card1.png',
+    'images/dummy_card2.png',
+    'images/dummy_card3.png',
+    'images/dummy_profile.png'
+  ];
   bool isStackFinished = false;
-
 
   @override
   void initState() {
     for (int i = 0; i < 5; i++) {
       _swipeItems.add(
-          SwipeItem(
-            content: imgList[i],
-          ),
+        SwipeItem(
+          content: imgList[i],
+        ),
       );
     }
 
@@ -42,15 +48,16 @@ class _MainCardSwiperScreenState extends State<MainCardSwiperScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(Theme.of(context).scaffoldBackgroundColor == kLightBg) {
+    if (Theme.of(context).scaffoldBackgroundColor == kLightBg) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-    }else{
+    } else {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     }
     final double widthScale = MediaQuery.of(context).size.width / 414;
     final double heightScale = MediaQuery.of(context).size.height / 896;
     return Scaffold(
-        body: Column(children: [
+      body: Column(
+        children: [
           Padding(
             padding: EdgeInsets.only(
                 top: 49 * heightScale,
@@ -73,45 +80,82 @@ class _MainCardSwiperScreenState extends State<MainCardSwiperScreen> {
                     ),
                   ],
                 ),
-                Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 6.0),
-                      child: ProfileImage(
-                          radius: 25 * widthScale,
-                          profileImg: 'images/dummy_profile_img1.png',
-                          onPress: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
-                          }),
-                    ),
-                    Image.asset(Theme.of(context).scaffoldBackgroundColor == kLightBg ? 'images/icons/notification.png' : 'images/icons/notification_black.png',width: 20*widthScale,height: 20*widthScale,)
-                  ],
-                )
+                StreamBuilder(
+                    stream: firebaseFirestore.collection('posts').snapshots(),
+                    builder: (context,
+                        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                            snapshot) {
+                      if (snapshot.hasData) {
+                        // for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                        //   _swipeItems.add(
+                        //     SwipeItem(
+                        //       content: snapshot.data!.docs[i].data()['postUrl'],
+                        //     ),
+                        //   );
+                        // }
+                        // matchEngine = MatchEngine(swipeItems: _swipeItems);
+
+                        return Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 6.0),
+                              child: ProfileImage(
+                                  radius: 25 * widthScale,
+                                  profileImg: 'images/dummy_profile_img1.png',
+                                  onPress: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProfileScreen()));
+                                  }),
+                            ),
+                            Image.asset(
+                              Theme.of(context).scaffoldBackgroundColor ==
+                                      kLightBg
+                                  ? 'images/icons/notification.png'
+                                  : 'images/icons/notification_black.png',
+                              width: 20 * widthScale,
+                              height: 20 * widthScale,
+                            )
+                          ],
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    })
               ],
             ),
           ),
-          isStackFinished ? const Expanded(
-              child: Center(child: TitleText(title:'No more Cards!'))
-          ): Expanded(
-            child: SwipeCards(
-              matchEngine: matchEngine,
-              itemBuilder: (BuildContext context, int index) {
-                return SwipeCardItem(img: imgList[index],);
-              },
-              onStackFinished: () {
-                setState(() {
-                  isStackFinished = true;
-                });
-              },
-              itemChanged: (SwipeItem item, int index) {
-              },
-              upSwipeAllowed: true,
-              fillSpace: true,
-            ),
-          ),
-          SizedBox(height: 36*heightScale,)
-        ]));
+          isStackFinished
+              ? const Expanded(
+                  child: Center(child: TitleText(title: 'No more Cards!')))
+              : Expanded(
+                  child: SwipeCards(
+                    matchEngine: matchEngine,
+                    itemBuilder: (BuildContext context, int index) {
+                      return SwipeCardItem(
+                        img: imgList[index],
+                      );
+                    },
+                    onStackFinished: () {
+                      setState(() {
+                        isStackFinished = true;
+                      });
+                    },
+                    itemChanged: (SwipeItem item, int index) {},
+                    upSwipeAllowed: true,
+                    fillSpace: true,
+                  ),
+                ),
+          SizedBox(
+            height: 36 * heightScale,
+          )
+        ],
+      ),
+    );
   }
 }
-

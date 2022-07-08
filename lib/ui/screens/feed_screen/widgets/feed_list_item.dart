@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FeedListItem extends StatelessWidget {
-  const FeedListItem({Key? key}) : super(key: key);
+  var snap;
+  FeedListItem({
+    Key? key,
+    required this.snap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +33,7 @@ class FeedListItem extends StatelessWidget {
                     children: [
                       ProfileImage(
                         radius: 17.5,
-                        profileImg:
-                            'https://awazpost.com/wp-content/uploads/2014/05/american-girls-screensavers.jpg',
+                        profileImg: snap['profImage'].toString(),
                         onPress: () {},
                       ),
                       SizedBox(
@@ -40,18 +43,18 @@ class FeedListItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Johanna, 22',
+                            snap['username'].toString(),
                             style: GoogleFonts.outfit(
                                 fontSize: 15 * widthScale,
                                 fontWeight: FontWeight.bold),
                           ),
-                          Text('aus Düsseldorf, DE',
-                              style: GoogleFonts.outfit(
-                                  fontSize: 10 * widthScale,
-                                  color: Theme.of(context)
-                                      .iconTheme
-                                      .color!
-                                      .withOpacity(0.7)))
+                          // Text(snap['datePublished'].toString(),
+                          //     style: GoogleFonts.outfit(
+                          //         fontSize: 10 * widthScale,
+                          //         color: Theme.of(context)
+                          //             .iconTheme
+                          //             .color!
+                          //             .withOpacity(0.7)))
                         ],
                       ),
                     ],
@@ -68,10 +71,9 @@ class FeedListItem extends StatelessWidget {
             ),
             PostImageSlider(
               imgList: [
-                'https://awazpost.com/wp-content/uploads/2014/05/american-girls-screensavers.jpg',
-                'https://images.unsplash.com/photo-1611880147493-7542bdb0f024?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YW1lcmljYW4lMjBnaXJsfGVufDB8fDB8fA%3D%3D&w=1000&q=80'
+                snap['postUrl'].toString(),
               ],
-              likeCount: 1500,
+              likeCount: snap['likes'].length,
               onLikeTap: () {},
             ),
             Padding(
@@ -80,11 +82,7 @@ class FeedListItem extends StatelessWidget {
                   left: 10 * widthScale,
                   right: 10 * widthScale),
               child: Text(
-                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy'
-                'eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam'
-                'voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita'
-                'kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
-                'Lorem ipsum dolor sit amet, consetetur sadipscing elit.',
+                snap['description'].toString(),
                 style: GoogleFonts.outfit(
                     fontSize: 12 * widthScale,
                     color: Theme.of(context).iconTheme.color!.withOpacity(0.7)),

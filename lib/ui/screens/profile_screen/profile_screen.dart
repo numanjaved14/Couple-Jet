@@ -14,10 +14,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
+import '../../../helpers/ad_manager.dart';
 import '../../../utils/constant.dart';
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({Key? key}) : super(key: key);
+  ProfileScreen({Key? key}) : super(key: key) {
+    adManager.addAds(true, true, true);
+  }
+
+  final adManager = AdManager();
 
   final List<Interest> interests = [
     Interest('Travelling', 'images/icons/travel.png', true),
@@ -50,7 +55,9 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     GradientRoundButton(
                       icon: Icons.add_rounded,
-                      onPress: () {},
+                      onPress: () {
+                        adManager.showRewardedAd();
+                      },
                     ),
                   ],
                 ),

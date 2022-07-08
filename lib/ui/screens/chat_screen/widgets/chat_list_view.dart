@@ -17,10 +17,8 @@ import 'package:uuid/uuid.dart';
 // import 'package:image_picker/image_picker.dart';
 // import 'package:file_picker/file_picker.dart';
 
-
 class ChatListView extends StatefulWidget {
-
-   ChatListView({Key? key}) : super(key: key);
+  ChatListView({Key? key}) : super(key: key);
 
   @override
   State<ChatListView> createState() => _ChatListViewState();
@@ -65,34 +63,34 @@ class _ChatListViewState extends State<ChatListView> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final double widthScale = MediaQuery.of(context).size.width / 414;
     final double heightScale = MediaQuery.of(context).size.height / 896;
-    return Chat
-      (
-      messages: _messages
-      ,
+    return Chat(
+      messages: _messages,
       onAttachmentPressed: _handleAtachmentPressed,
       onMessageTap: _handleMessageTap,
       onPreviewDataFetched: _handlePreviewDataFetched,
-      onSendPressed: (msg){},
+      onSendPressed: (msg) {},
       user: _user,
       customBottomWidget: CommentInputContainer(
-        onSendPress: (){
+        onSendPress: () {
           _handleSendPressed(controller.text);
         },
         textController: controller,
       ),
       bubbleBuilder: _bubbleBuilder,
       showUserAvatars: true,
-      avatarBuilder: (userId){
-        return Padding(padding:EdgeInsets.only(right: 12),child:ProfileImage(radius:
-        (17), profileImg: 'images/dummy_profile.png', onPress: (){}));
+      avatarBuilder: (userId) {
+        return Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: ProfileImage(
+                radius: (17),
+                profileImg: 'images/dummy_profile.png',
+                onPress: () {}));
       },
-      dateHeaderBuilder: (header){
+      dateHeaderBuilder: (header) {
         return Center(
           child: Container(
             width: 150,
@@ -100,10 +98,21 @@ class _ChatListViewState extends State<ChatListView> {
             margin: EdgeInsets.all(16),
             // padding: EdgeInsets.only(top: 4,right: 15,left: 15,bottom:4 ),
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor == kLightBg ? Colors.black : kLightBg,
+              color: Theme.of(context).scaffoldBackgroundColor == kLightBg
+                  ? Colors.black
+                  : kLightBg,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Center(child: Text(header.text,style:GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 15,color: Theme.of(context).scaffoldBackgroundColor == kLightBg ? Colors.white : Colors.black,))),
+            child: Center(
+                child: Text(header.text,
+                    style: GoogleFonts.outfit(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      color:
+                          Theme.of(context).scaffoldBackgroundColor == kLightBg
+                              ? Colors.white
+                              : Colors.black,
+                    ))),
           ),
         );
       },
@@ -111,9 +120,10 @@ class _ChatListViewState extends State<ChatListView> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           secondaryColor: kTeal,
           primaryColor: Theme.of(context).primaryColor,
-          sentMessageBodyTextStyle: GoogleFonts.outfit(color:Theme.of(context).iconTheme.color,fontSize: 15),
-          receivedMessageBodyTextStyle: GoogleFonts.outfit(color:Colors.white,fontSize: 15)
-      ),
+          sentMessageBodyTextStyle: GoogleFonts.outfit(
+              color: Theme.of(context).iconTheme.color, fontSize: 15),
+          receivedMessageBodyTextStyle:
+              GoogleFonts.outfit(color: Colors.white, fontSize: 15)),
     );
   }
 
@@ -215,43 +225,49 @@ class _ChatListViewState extends State<ChatListView> {
   }
 
   void _handlePreviewDataFetched(
-      types.TextMessage message,
-      types.PreviewData previewData,
-      ) {
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
     final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = _messages[index].copyWith(previewData: previewData);
+    // final updatedMessage = _messages[index].copyWith(previewData: previewData);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        _messages[index] = updatedMessage;
+        // _messages[index] = updatedMessage;
       });
     });
   }
 
   Widget _bubbleBuilder(
-      Widget child, {
-        required message,
-        required nextMessageInGroup,
-      }) {
+    Widget child, {
+    required message,
+    required nextMessageInGroup,
+  }) {
     return Container(
       child: child,
       decoration: _user.id != message.author.id ||
-          message.type == types.MessageType.image ? BoxDecoration(
-        gradient: const LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        stops: [0.0, 1.0],
-        colors: [
-          kBlue,
-          kTeal
-        ],
-      ),
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(0),bottomRight: Radius.circular(16),topLeft: Radius.circular(16),topRight: Radius.circular(16)),
-      ):BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16),bottomRight: Radius.circular(0),topLeft: Radius.circular(16),topRight: Radius.circular(16)),
-      ),
-
+              message.type == types.MessageType.image
+          ? BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.0, 1.0],
+                colors: [kBlue, kTeal],
+              ),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(0),
+                  bottomRight: Radius.circular(16),
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16)),
+            )
+          : BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(0),
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16)),
+            ),
     );
   }
 }

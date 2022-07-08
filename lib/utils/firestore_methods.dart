@@ -102,4 +102,27 @@ class FireStoreMethods {
       print(e.toString());
     }
   }
+
+  Future<String> updateReward() async {
+    String res = "Some error occurred";
+    try {
+      var userSnap = await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      int i = userSnap.data()!['reward'];
+      await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'reward': ++i,
+      });
+      res = 'success';
+      print(res);
+    } catch (err) {
+      res = err.toString();
+      print(res);
+    }
+    return res;
+  }
 }
