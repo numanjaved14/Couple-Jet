@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:couple_jet/models/usermodel.dart';
+import 'package:couple_jet/utils/storage_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -52,7 +56,7 @@ class AuthUtils {
         "reward": 0,
         // 'Password':password
       }).then((value) {
-        Customdialog().showInSnackBar("Logged in", context);
+        Customdialog.showInSnackBar("Logged in", context);
         // Provider.of<CircularProgressProvider>(context,listen: false).setValue(false);
         Customdialog.closeDialog(context);
         Navigator.pushAndRemoveUntil(
@@ -85,95 +89,81 @@ class AuthUtils {
     return null;
   }
 
-  registerUser(String imageLink, String name, String email, String password,
-      String dateOfBirth, BuildContext context) async {
+  // registerUser(String imageLink, String name, String email, String password,
+
+  //     String dateOfBirth, BuildContext context) async {
+  //   try {
+  //     await firebaseAuth
+  //         .createUserWithEmailAndPassword(email: email, password: password)
+  //         .then((value) {
+  //       firebaseFirestore
+  //           .collection('users')
+  //           .doc(firebaseAuth.currentUser!.uid)
+  //           .set({
+  //         "id": firebaseAuth.currentUser!.uid,
+  //         'UserName': name,
+  //         'Email': email,
+  //         "DOB": dateOfBirth,
+  //         // "Phone Number":phoneNumber,
+  //         "imageLink": imageLink,
+  //         "searchName": searchName(name),
+  //         "status": "offline",
+  //         "reward": 0
+  //         // 'Password':password
+  //       }).whenComplete(() {
+  //         // Customdialog.closeDialog(context);
+  //         Navigator.of(context).pop();
+  //         print(
+  //             "--------------------------------------------------------------------------------------------------------");
+  //         print(
+  //             "------------------------------------------------------------------------");
+
+  //         print(
+  //             "--------------------------------------------------------------------------------------------------------");
+  //         print(
+  //             "------------------------------------------------------------------------");
+
+  //         Navigator.pushAndRemoveUntil(
+  //             context,
+  //             MaterialPageRoute(builder: (context) => SignUpNextScreen()),
+  //             (route) => false);
+  //       });
+  //     }).catchError((onError) {
+  //       throw onError;
+  //     });
+  //   } on FirebaseAuthException catch (e) {
+  //     Navigator.pop(context);
+
+  //     Customdialog.showBox(context, e.toString());
+  //   }
+  // }
+
+  Future<String> loginUpUser({
+    required String email,
+    required String pass,
+  }) async {
+    String res = 'Some error occured';
     try {
-      await firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) {
-        firebaseFirestore
-            .collection('users')
-            .doc(firebaseAuth.currentUser!.uid)
-            .set({
-          "id": firebaseAuth.currentUser!.uid,
-          'UserName': name,
-          'Email': email,
-          "DOB": dateOfBirth,
-          // "Phone Number":phoneNumber,
-          "imageLink": imageLink,
-          "searchName": searchName(name),
-          "status": "offline",
-          "reward": 0
-          // 'Password':password
-        }).whenComplete(() {
-          // Customdialog.closeDialog(context);
-          Navigator.of(context).pop();
-          print(
-              "--------------------------------------------------------------------------------------------------------");
-          print(
-              "------------------------------------------------------------------------");
+      if (email.isNotEmpty || pass.isNotEmpty) {
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email, password: pass);
 
-          print(
-              "--------------------------------------------------------------------------------------------------------");
-          print(
-              "------------------------------------------------------------------------");
-
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => SignUpNextScreen()),
-              (route) => false);
-        });
-      }).catchError((onError) {
-        throw onError;
-      });
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-
-      Customdialog.showBox(context, e.toString());
-    }
-  }
-
-  loginUser(
-      String email, String password, BuildContext context, String type) async {
-    try {
-      await firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .then((v) {
-        firebaseFirestore
-            .collection('users')
-            .doc(v.user!.uid)
-            .get()
-            .then((doc) {
-          print(doc['Email']);
-          if (doc['Email'] == email && doc['Type'] == type) {
-            Customdialog().showInSnackBar("$type Logged in", context);
-            Customdialog.closeDialog(context);
-          }
-        });
-      }).catchError((e) {
-        throw e;
-      });
+        res = 'sucess';
+      }
+    } on FirebaseException catch (e) {
+      if (e == 'WrongEmail') {
+        print(e.message);
+      }
+      if (e == 'WrongPassword') {
+        print(e.message);
+      }
     } catch (e) {
-      Navigator.pop(context);
-      Customdialog.showBox(context, e.toString());
+      res = e.toString();
     }
+    return res;
   }
 
-  resetPassword(String email, BuildContext context) async {
-    try {
-      await firebaseAuth.sendPasswordResetEmail(email: email).then((value) {
-        Customdialog.closeDialog(context);
-        Customdialog.closeDialog(context);
-        Customdialog().showInSnackBar("Please Check your email", context);
-      }).catchError((e) {
-        throw e;
-      });
-    } catch (e) {
-      Navigator.pop(context);
-      Customdialog.showBox(context, e.toString());
-    }
-  }
-
+  //Search Users
   searchName(String name) {
     List<String> caseSearchList = [];
     String temp = "";
@@ -182,5 +172,51 @@ class AuthUtils {
       caseSearchList.add(temp);
     }
     return caseSearchList;
+  }
+//Search User
+
+//Register
+  Future<String> signUpUser({
+    required String email,
+    required String pass,
+    required String dateofbirth,
+    required String username,
+    required String status,
+    required String searchName,
+    String? gender,
+    required int reward,
+    required Uint8List file,
+  }) async {
+    String res = 'Some error occured';
+    try {
+      if (email.isNotEmpty ||
+          pass.isNotEmpty ||
+          dateofbirth.isNotEmpty ||
+          username.isNotEmpty) {
+        UserCredential cred = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: pass);
+        String imageLink = await StorageMethods()
+            .uploadImageToStorage('ProfilePics', file, false);
+        //Add User to the database with modal
+        UserModel userModel = UserModel(
+            UserName: username,
+            id: cred.user!.uid,
+            Email: email,
+            imageLink: imageLink,
+            status: "online",
+            DOB: dateofbirth,
+            gender: gender!,
+            reward: reward,
+            searchName: searchName);
+        await firebaseFirestore
+            .collection('users')
+            .doc(cred.user!.uid)
+            .set(userModel.toJson());
+        res = 'sucess';
+      }
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
   }
 }

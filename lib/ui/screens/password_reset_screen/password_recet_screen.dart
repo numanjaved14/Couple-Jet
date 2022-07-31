@@ -4,11 +4,12 @@ import 'package:couple_jet/ui/reusable/main_text_field.dart';
 import 'package:couple_jet/ui/reusable/title_text.dart';
 import 'package:couple_jet/ui/reusable/top_app_bar.dart';
 import 'package:couple_jet/utils/colors.dart';
+import 'package:couple_jet/utils/customdialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class PasswordResetScreen extends StatelessWidget {
-
   PasswordResetScreen({Key? key}) : super(key: key);
 
   final TextEditingController emailController = TextEditingController();
@@ -25,7 +26,7 @@ class PasswordResetScreen extends StatelessWidget {
         children: [
           // app bar
           TopAppBar(
-            onBackPress: (){
+            onBackPress: () {
               Navigator.pop(context);
             },
             title: 'Password-reset',
@@ -33,58 +34,73 @@ class PasswordResetScreen extends StatelessWidget {
           // email dob container
           CardContainer(
               child: Column(
-                children: [
-                  const TitleText(title: "Shit happens..."),
-                  SizedBox(height: 15*heightScale,),
-                  CustomTextField(
-                      hint: "E-Mail Address",
-                      textController: emailController,
-                      prefixIcon: Icons.alternate_email_rounded
-                  ),
-                  SizedBox(height: 21*heightScale,),
-                  GestureDetector(
-                    onTap: (){onDobTap(context);},
-                    child: CustomTextField(
-                      hint: "Date of birth",
-                      textController: dobController,
-                      prefixIcon: Icons.cake_rounded,
-                      isEnabled: false,
-                    ),
-                  ),
-                  SizedBox(height: 35*heightScale,),
-                  MainButton(
-                    title: "Send reset-link",
-                    onPress: (){},
-                  )
-                ],
+            children: [
+              const TitleText(title: "Shit happens..."),
+              SizedBox(
+                height: 15 * heightScale,
+              ),
+              CustomTextField(
+                  hint: "E-Mail Address",
+                  textController: emailController,
+                  prefixIcon: Icons.alternate_email_rounded),
+              SizedBox(
+                height: 21 * heightScale,
+              ),
+              GestureDetector(
+                onTap: () {
+                  onDobTap(context);
+                },
+                child: CustomTextField(
+                  hint: "Date of birth",
+                  textController: dobController,
+                  prefixIcon: Icons.cake_rounded,
+                  isEnabled: false,
+                ),
+              ),
+              SizedBox(
+                height: 35 * heightScale,
+              ),
+              MainButton(
+                title: "Send reset-link",
+                onPress: () async {
+                  if (emailController.text.isEmpty) {
+                    Customdialog.showInSnackBar("required email", context);
+                  } else if (emailController.text.isNotEmpty) {
+                    Customdialog.showDialogBox(context);
+                    await FirebaseAuth.instance
+                        .sendPasswordResetEmail(
+                            email: emailController.text.trim())
+                        .then((value) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Customdialog.showInSnackBar(
+                          "Please check your email account", context);
+                    });
+                  }
+                },
               )
-          ),
+            ],
+          )),
         ],
       ),
     );
   }
 
-  onDobTap(BuildContext context){
+  onDobTap(BuildContext context) {
     DatePicker.showDatePicker(context,
         showTitleActions: true,
         theme: DatePickerTheme(
           backgroundColor: Theme.of(context).primaryColor,
-          itemStyle: TextStyle(
-              color: Theme.of(context).iconTheme.color
-          ),
+          itemStyle: TextStyle(color: Theme.of(context).iconTheme.color),
           cancelStyle: TextStyle(
-              color: Theme.of(context).iconTheme.color!.withOpacity(0.5)
-          ),
-          doneStyle: const TextStyle(
-              color: kTeal
-          ),
+              color: Theme.of(context).iconTheme.color!.withOpacity(0.5)),
+          doneStyle: const TextStyle(color: kTeal),
         ),
         minTime: DateTime(2018, 3, 5),
-        maxTime: DateTime(2019, 6, 7),
-        onChanged: (date) {
-          dobController.text = date.toString();
-        }, onConfirm: (date) {
-          dobController.text = date.toString();
-        }, currentTime: DateTime.now(), locale: LocaleType.en);
+        maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+      dobController.text = date.toString();
+    }, onConfirm: (date) {
+      dobController.text = date.toString();
+    }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
 }

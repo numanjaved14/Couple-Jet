@@ -14,7 +14,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class SignUpNextScreen extends StatefulWidget {
-
   SignUpNextScreen({Key? key}) : super(key: key);
 
   @override
@@ -49,7 +48,7 @@ class _SignUpNextScreenState extends State<SignUpNextScreen> {
             children: [
               // app bar
               TopAppBar(
-                onBackPress: (){
+                onBackPress: () {
                   Navigator.pop(context);
                 },
                 title: 'Sign up',
@@ -57,89 +56,113 @@ class _SignUpNextScreenState extends State<SignUpNextScreen> {
               // email pwd container
               CardContainer(
                   child: Column(
-                    children: [
-                      const TitleText(title: "Welcome!"),
-                      SizedBox(height: 15*heightScale,),
-                      Text(
-                        "Let's setup your profile! First you need anice profile pic - let's go!",
-                        textAlign: TextAlign.center,
-                        style: kNormalGreyText(context),),
-                  SizedBox(height: 56*heightScale,),
+                children: [
+                  const TitleText(title: "Welcome!"),
+                  SizedBox(
+                    height: 15 * heightScale,
+                  ),
+                  Text(
+                    "Let's setup your profile! First you need anice profile pic - let's go!",
+                    textAlign: TextAlign.center,
+                    style: kNormalGreyText(context),
+                  ),
+                  SizedBox(
+                    height: 56 * heightScale,
+                  ),
                   Container(
-                    width: 150*widthScale,
-                    height: 150*widthScale,
+                    width: 150 * widthScale,
+                    height: 150 * widthScale,
                     decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.bottomRight,
-                          stops: [0.0, 1.0],
-                          colors: [
-                            kBlue,
-                            kTeal,
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                      boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 4), blurRadius: 12.0)],
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.bottomRight,
+                        stops: [0.0, 1.0],
+                        colors: [
+                          kBlue,
+                          kTeal,
+                        ],
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black12,
+                            offset: Offset(0, 4),
+                            blurRadius: 12.0)
+                      ],
                     ),
                     child: InkWell(
                       onTap: addImage,
-                      child:imageUrl==null? Container(
-                        margin: EdgeInsets.all(12*widthScale),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            shape: BoxShape.circle
-                        ),
-                        child: Icon(Icons.add_photo_alternate_rounded,size: 35*widthScale,)
-                        ,
-                      ):Container(
-                        margin: EdgeInsets.all(12*widthScale),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            shape: BoxShape.circle
-                       ,image: DecorationImage(image: FileImage(imageUrl!),fit: BoxFit.fill)
-                        ),
-                      ),
+                      child: imageUrl == null
+                          ? Container(
+                              margin: EdgeInsets.all(12 * widthScale),
+                              decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  shape: BoxShape.circle),
+                              child: Icon(
+                                Icons.add_photo_alternate_rounded,
+                                size: 35 * widthScale,
+                              ),
+                            )
+                          : Container(
+                              margin: EdgeInsets.all(12 * widthScale),
+                              decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image: FileImage(imageUrl!),
+                                      fit: BoxFit.fill)),
+                            ),
                     ),
                   ),
-                      SizedBox(height: 64*heightScale,),
-                    ],
-                  )
-              ),
+                  SizedBox(
+                    height: 64 * heightScale,
+                  ),
+                ],
+              )),
             ],
           ),
           // social login container
           Container(
-            padding: EdgeInsets.only(top: 24*heightScale,bottom: 24*heightScale,left: 42*widthScale,right: 42*widthScale),
+            padding: EdgeInsets.only(
+                top: 24 * heightScale,
+                bottom: 24 * heightScale,
+                left: 42 * widthScale,
+                right: 42 * widthScale),
             decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.only(topRight: Radius.circular(20*widthScale),topLeft: Radius.circular(20*widthScale))
-            ),
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20 * widthScale),
+                    topLeft: Radius.circular(20 * widthScale))),
             child: MainButton(
               title: "Next step",
-              onPress: (){
-
-                if(imageUrl==null){
-               Customdialog().showInSnackBar("Please select image", context);
-             }
-             else{
-               Customdialog.showDialogBox(context);
-               uploadImageToFirebase().then((value) {
-                 Customdialog.closeDialog(context);
-            firebaseFirestore.collection("users").doc(firebaseAuth.currentUser!.uid).update({
-              "imageLink":imageLink
-            }).whenComplete(() {
-
-Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>BottomNavBar()), (route) => false);
-            });
-               });
-             }
-                },
+              onPress: () {
+                if (imageUrl == null) {
+                  Customdialog.showInSnackBar("Please select image", context);
+                } else {
+                  Customdialog.showDialogBox(context);
+                  uploadImageToFirebase().then((value) {
+                    Customdialog.closeDialog(context);
+                    firebaseFirestore
+                        .collection("users")
+                        .doc(firebaseAuth.currentUser!.uid)
+                        .update({"imageLink": imageLink}).whenComplete(() {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => BottomNavBar()),
+                          (route) => false);
+                    });
+                  });
+                }
+              },
             ),
           )
         ],
       ),
     );
   }
+
   Future uploadImageToFirebase() async {
     File? fileName = imageUrl;
     var uuid = Uuid();
@@ -148,9 +171,9 @@ Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>BottomNavB
         .ref()
         .child('profile/images+${uuid.v4()}');
     firebase_storage.UploadTask uploadTask =
-    firebaseStorageRef.putFile(fileName!);
+        firebaseStorageRef.putFile(fileName!);
     firebase_storage.TaskSnapshot taskSnapshot =
-    await uploadTask.whenComplete(() async {
+        await uploadTask.whenComplete(() async {
       print(fileName);
       String img = await uploadTask.snapshot.ref.getDownloadURL();
       setState(() {

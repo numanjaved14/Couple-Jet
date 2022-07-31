@@ -1,26 +1,44 @@
+import 'dart:typed_data';
+
 import 'package:couple_jet/ui/reusable/card_container.dart';
 import 'package:couple_jet/ui/reusable/main_button.dart';
 import 'package:couple_jet/ui/reusable/main_text_field.dart';
 import 'package:couple_jet/ui/reusable/social_login_button.dart';
 import 'package:couple_jet/ui/reusable/title_text.dart';
 import 'package:couple_jet/ui/reusable/top_app_bar.dart';
+import 'package:couple_jet/ui/screens/bottom_nav_bar/bottom_nav_bar.dart';
 import 'package:couple_jet/ui/screens/sign_up_next_screen/sign_up_next_screen.dart';
 import 'package:couple_jet/utils/authutils.dart';
 import 'package:couple_jet/utils/colors.dart';
 import 'package:couple_jet/utils/constant.dart';
 import 'package:couple_jet/utils/customdialog.dart';
+import 'package:couple_jet/utils/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   SignUpScreen({Key? key}) : super(key: key);
 
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController pwdController = TextEditingController();
+
   final TextEditingController rePwdController = TextEditingController();
+
   final TextEditingController dobController = TextEditingController();
+
   final TextEditingController userController = TextEditingController();
+
   final formKey = GlobalKey<FormState>();
+  Uint8List? _image;
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final double widthScale = MediaQuery.of(context).size.width / 414;
@@ -50,6 +68,31 @@ class SignUpScreen extends StatelessWidget {
                       const TitleText(title: "Welcome back!"),
                       SizedBox(
                         height: 15 * heightScale,
+                      ),
+                      Stack(
+                        children: [
+                          _image != null
+                              ? CircleAvatar(
+                                  radius: 59,
+                                  backgroundImage: MemoryImage(_image!))
+                              : CircleAvatar(
+                                  radius: 59,
+                                  backgroundImage: NetworkImage(
+                                      'https://static.remove.bg/remove-bg-web/a6eefcd21dff1bbc2448264c32f7b48d7380cb17/assets/start_remove-c851bdf8d3127a24e2d137a55b1b427378cd17385b01aec6e59d5d4b5f39d2ec.png'),
+                                ),
+                          Positioned(
+                              bottom: -10,
+                              left: 70,
+                              child: IconButton(
+                                  onPressed: () => selectImage(),
+                                  icon: Icon(
+                                    Icons.add_a_photo,
+                                    color: Colors.white,
+                                  )))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 23,
                       ),
                       CustomTextField(
                           validator: requiredValidator,
@@ -106,13 +149,9 @@ class SignUpScreen extends StatelessWidget {
                         onPress: () {
                           if (formKey.currentState!.validate()) {
                             Customdialog.showDialogBox(context);
-                            AuthUtils().registerUser(
-                                "",
-                                userController.text,
-                                emailController.text,
-                                pwdController.text,
-                                dobController.text,
-                                context);
+                            _isLoading
+                                ? CircularProgressIndicator()
+                                : registerUser();
                           }
 //                               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  SignUpNextScreen()), (route) => false);
                         },
@@ -185,5 +224,49 @@ class SignUpScreen extends StatelessWidget {
     }, onConfirm: (date) {
       dobController.text = date.toString();
     }, currentTime: DateTime.now(), locale: LocaleType.en);
+  }
+
+  void registerUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthUtils().signUpUser(
+        reward: 0,
+        email: emailController.text,
+        status: "online",
+        searchName: searchName(userController.text),
+        dateofbirth: dobController.text,
+        pass: pwdController.text,
+        username: userController.text,
+        file: _image!);
+    print(res);
+    setState(() {
+      _isLoading = false;
+    });
+    if (res != 'sucess') {
+      Customdialog.showInSnackBar(res, context);
+    } else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (builder) => BottomNavBar()));
+    }
+  }
+
+  selectImage() async {
+    Uint8List ui = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = ui;
+    });
+  }
+
+  //Search user
+  //Search Users
+  searchName(String name) {
+    List<String> caseSearchList = [];
+    String temp = "";
+    for (int i = 0; i < name.length; i++) {
+      temp = temp + name[i].toLowerCase();
+      caseSearchList.add(temp);
+    }
+    return caseSearchList;
   }
 }
