@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../ui/screens/bottom_nav_bar/bottom_nav_bar.dart';
-import '../ui/screens/sign_up_next_screen/sign_up_next_screen.dart';
 import 'constant.dart';
 import 'constants.dart';
 import 'customdialog.dart';

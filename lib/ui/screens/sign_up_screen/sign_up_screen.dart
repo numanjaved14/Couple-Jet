@@ -7,7 +7,6 @@ import 'package:couple_jet/ui/reusable/social_login_button.dart';
 import 'package:couple_jet/ui/reusable/title_text.dart';
 import 'package:couple_jet/ui/reusable/top_app_bar.dart';
 import 'package:couple_jet/ui/screens/bottom_nav_bar/bottom_nav_bar.dart';
-import 'package:couple_jet/ui/screens/sign_up_next_screen/sign_up_next_screen.dart';
 import 'package:couple_jet/utils/authutils.dart';
 import 'package:couple_jet/utils/colors.dart';
 import 'package:couple_jet/utils/constant.dart';
@@ -246,8 +245,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (res != 'sucess') {
       Customdialog.showInSnackBar(res, context);
     } else {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (builder) => BottomNavBar()));
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (_) => BottomNavBar()), (route) => false);
     }
   }
 
