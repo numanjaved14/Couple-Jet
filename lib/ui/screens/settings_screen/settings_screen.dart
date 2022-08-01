@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:couple_jet/ui/reusable/card_container.dart';
 import 'package:couple_jet/ui/reusable/main_button.dart';
 import 'package:couple_jet/ui/reusable/title_text.dart';
 import 'package:couple_jet/ui/reusable/top_app_bar.dart';
 import 'package:couple_jet/ui/screens/my_profile_screen/widgets/gender_card.dart';
 import 'package:couple_jet/utils/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'widgets/slider_theme.dart';
@@ -43,7 +45,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: 'Settings',
         ),
         // email pwd container
-        Expanded(child:SingleChildScrollView(
+        Expanded(
+            child: SingleChildScrollView(
           child: Column(
             children: [
               CardContainer(
@@ -62,14 +65,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4*heightScale),
+                    padding: EdgeInsets.symmetric(vertical: 4 * heightScale),
                     child: SliderTheme(
                       data: SliderThemeData(
-                          trackShape: GradientRectSliderTrackShape(darkenInactive: false),
-                          inactiveTrackColor: Color.fromRGBO(240, 241, 245, 1),
-                          activeTrackColor: Color.fromRGBO(240, 241, 245, 1),
-                          overlayShape: SliderComponentShape.noOverlay,
-                          thumbColor: kTeal,
+                        trackShape:
+                            GradientRectSliderTrackShape(darkenInactive: false),
+                        inactiveTrackColor: Color.fromRGBO(240, 241, 245, 1),
+                        activeTrackColor: Color.fromRGBO(240, 241, 245, 1),
+                        overlayShape: SliderComponentShape.noOverlay,
+                        thumbColor: kTeal,
                       ),
                       child: Slider(
                         onChanged: (val) {
@@ -91,7 +95,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       SubText(text: '150km'),
                     ],
                   ),
-                  SizedBox(height: 25*heightScale,),
+                  SizedBox(
+                    height: 25 * heightScale,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -100,14 +106,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           SubText(text: 'Disabled'),
                           SizedBox(
-                            height: 12*widthScale,
-                            width: 45*widthScale,
+                            height: 12 * widthScale,
+                            width: 45 * widthScale,
                             child: Switch(
                                 value: distanceStatus,
-                                activeThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                inactiveThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                inactiveTrackColor: Color.fromRGBO(240, 241, 245, 1),
-                                activeTrackColor: Color.fromRGBO(240, 241, 245, 1),
+                                activeThumbImage:
+                                    AssetImage('images/icons/switch_thumb.png'),
+                                inactiveThumbImage:
+                                    AssetImage('images/icons/switch_thumb.png'),
+                                inactiveTrackColor:
+                                    Color.fromRGBO(240, 241, 245, 1),
+                                activeTrackColor:
+                                    Color.fromRGBO(240, 241, 245, 1),
                                 onChanged: (val) {
                                   setState(() {
                                     distanceStatus = val;
@@ -118,7 +128,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       )
                     ],
                   ),
-                  SizedBox(height: 20*heightScale,),
+                  SizedBox(
+                    height: 20 * heightScale,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -127,14 +139,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           SubText(text: 'Disabled'),
                           SizedBox(
-                            height: 12*widthScale,
-                            width: 45*widthScale,
+                            height: 12 * widthScale,
+                            width: 45 * widthScale,
                             child: Switch(
                                 value: interestStatus,
-                                activeThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                inactiveThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                inactiveTrackColor: Color.fromRGBO(240, 241, 245, 1),
-                                activeTrackColor: Color.fromRGBO(240, 241, 245, 1),
+                                activeThumbImage:
+                                    AssetImage('images/icons/switch_thumb.png'),
+                                inactiveThumbImage:
+                                    AssetImage('images/icons/switch_thumb.png'),
+                                inactiveTrackColor:
+                                    Color.fromRGBO(240, 241, 245, 1),
+                                activeTrackColor:
+                                    Color.fromRGBO(240, 241, 245, 1),
                                 onChanged: (val) {
                                   setState(() {
                                     interestStatus = val;
@@ -145,17 +161,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       )
                     ],
                   ),
-                  SizedBox(height: 2*heightScale,),
+                  SizedBox(
+                    height: 2 * heightScale,
+                  ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Only people with min. one shared interest are shown',
-                      style: GoogleFonts.outfit(fontSize: 12 * widthScale,),
+                      style: GoogleFonts.outfit(
+                        fontSize: 12 * widthScale,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 24*heightScale,),
-                  Align( alignment: Alignment.centerLeft,child: SubText(text: 'Show following gender:')),
-                  SizedBox(height: 8*heightScale,),
+                  SizedBox(
+                    height: 24 * heightScale,
+                  ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: SubText(text: 'Show following gender:')),
+                  SizedBox(
+                    height: 8 * heightScale,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -204,7 +230,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 18*heightScale,),
+                  SizedBox(
+                    height: 18 * heightScale,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -213,14 +241,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           SubText(text: 'True'),
                           SizedBox(
-                            height: 12*widthScale,
-                            width: 45*widthScale,
+                            height: 12 * widthScale,
+                            width: 45 * widthScale,
                             child: Switch(
                                 value: gendersStatus,
-                                activeThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                inactiveThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                inactiveTrackColor: Color.fromRGBO(240, 241, 245, 1),
-                                activeTrackColor: Color.fromRGBO(240, 241, 245, 1),
+                                activeThumbImage:
+                                    AssetImage('images/icons/switch_thumb.png'),
+                                inactiveThumbImage:
+                                    AssetImage('images/icons/switch_thumb.png'),
+                                inactiveTrackColor:
+                                    Color.fromRGBO(240, 241, 245, 1),
+                                activeTrackColor:
+                                    Color.fromRGBO(240, 241, 245, 1),
                                 onChanged: (val) {
                                   setState(() {
                                     gendersStatus = val;
@@ -254,14 +286,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children: [
                             SubText(text: 'Enabled'),
                             SizedBox(
-                              height: 12*widthScale,
-                              width: 45*widthScale,
+                              height: 12 * widthScale,
+                              width: 45 * widthScale,
                               child: Switch(
                                   value: notificationStatus,
-                                  activeThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                  inactiveThumbImage: AssetImage('images/icons/switch_thumb.png'),
-                                  inactiveTrackColor: Color.fromRGBO(240, 241, 245, 1),
-                                  activeTrackColor: Color.fromRGBO(240, 241, 245, 1),
+                                  activeThumbImage: AssetImage(
+                                      'images/icons/switch_thumb.png'),
+                                  inactiveThumbImage: AssetImage(
+                                      'images/icons/switch_thumb.png'),
+                                  inactiveTrackColor:
+                                      Color.fromRGBO(240, 241, 245, 1),
+                                  activeTrackColor:
+                                      Color.fromRGBO(240, 241, 245, 1),
                                   onChanged: (val) {
                                     setState(() {
                                       notificationStatus = val;
@@ -272,7 +308,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 22*heightScale,),
+                    SizedBox(
+                      height: 22 * heightScale,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -280,7 +318,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icon(Icons.arrow_forward_rounded),
                       ],
                     ),
-                    SizedBox(height: 22*heightScale,),
+                    SizedBox(
+                      height: 22 * heightScale,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -288,7 +328,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icon(Icons.arrow_forward_rounded),
                       ],
                     ),
-                    SizedBox(height: 22*heightScale,),
+                    SizedBox(
+                      height: 22 * heightScale,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -296,17 +338,67 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icon(Icons.arrow_forward_rounded),
                       ],
                     ),
-                    SizedBox(height: 24*heightScale,),
-                    Text(
-                      'Delete account',
-                      style: GoogleFonts.outfit(fontSize: 12 * widthScale,color: Colors.red),
-                    )
+                    SizedBox(
+                      height: 24 * heightScale,
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          _delete(context);
+                        },
+                        child: Text(
+                          'Delete account',
+                          style: GoogleFonts.outfit(
+                              fontSize: 12 * widthScale, color: Colors.red),
+                        ))
                   ])),
-              SizedBox(height: 22*heightScale,),
+              SizedBox(
+                height: 22 * heightScale,
+              ),
             ],
           ),
-        )
-        )]),
+        ))
+      ]),
+    );
+  }
+
+  //Delete
+  void _delete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text('Please Confirm'),
+          content: const Text(
+            'Are you sure to remove the service',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+          ),
+          actions: [
+            // The "Yes" button
+            TextButton(
+              onPressed: () {
+                // Remove the box
+                setState(() {
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .delete();
+                });
+
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
