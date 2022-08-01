@@ -127,11 +127,14 @@ class FeedScreen extends StatelessWidget {
                                   );
                                 }),
                           );
-                        } else {
+                        } else if (snapshot.hasError) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: Text("No Post"),
                           );
                         }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }),
                 ],
               );

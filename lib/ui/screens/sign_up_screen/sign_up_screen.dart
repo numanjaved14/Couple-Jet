@@ -148,9 +148,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPress: () {
                           if (formKey.currentState!.validate()) {
                             Customdialog.showDialogBox(context);
-                            _isLoading
-                                ? CircularProgressIndicator()
-                                : registerUser();
+                            AuthUtils().registerUser(
+                                userController.text,
+                                emailController.text,
+                                pwdController.text,
+                                _image!,
+                                dobController.text,
+                                context);
                           }
 //                               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  SignUpNextScreen()), (route) => false);
                         },
@@ -225,30 +229,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
 
-  void registerUser() async {
-    setState(() {
-      _isLoading = true;
-    });
-    String res = await AuthUtils().signUpUser(
-        reward: 0,
-        email: emailController.text,
-        status: "online",
-        searchName: searchName(userController.text),
-        dateofbirth: dobController.text,
-        pass: pwdController.text,
-        username: userController.text,
-        file: _image!);
-    print(res);
-    setState(() {
-      _isLoading = false;
-    });
-    if (res != 'sucess') {
-      Customdialog.showInSnackBar(res, context);
-    } else {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (_) => BottomNavBar()), (route) => false);
-    }
-  }
+  // void registerUser() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   String res = await AuthUtils().signUpUser(
+  //       reward: 0,
+  //       email: emailController.text,
+  //       status: "online",
+  //       searchName: searchName(userController.text),
+  //       dateofbirth: dobController.text,
+  //       pass: pwdController.text,
+  //       username: userController.text,
+  //       file: _image!);
+  //   print(res);
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  //   if (res != 'sucess') {
+  //     Customdialog.showInSnackBar(res, context);
+  //   } else {
+  //     Navigator.pushAndRemoveUntil(context,
+  //         MaterialPageRoute(builder: (_) => BottomNavBar()), (route) => false);
+  //   }
+  // }
 
   selectImage() async {
     Uint8List ui = await pickImage(ImageSource.gallery);

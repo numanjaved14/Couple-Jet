@@ -88,54 +88,62 @@ class AuthUtils {
     return null;
   }
 
-  // registerUser(String imageLink, String name, String email, String password,
+  registerUser(
+    String name,
+    String email,
+    String password,
+    Uint8List file,
+    String dateOfBirth,
+    BuildContext context,
+  ) async {
+    try {
+      await firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) async {
+        String imageLink = await StorageMethods()
+            .uploadImageToStorage('ProfilePics', file, false);
 
-  //     String dateOfBirth, BuildContext context) async {
-  //   try {
-  //     await firebaseAuth
-  //         .createUserWithEmailAndPassword(email: email, password: password)
-  //         .then((value) {
-  //       firebaseFirestore
-  //           .collection('users')
-  //           .doc(firebaseAuth.currentUser!.uid)
-  //           .set({
-  //         "id": firebaseAuth.currentUser!.uid,
-  //         'UserName': name,
-  //         'Email': email,
-  //         "DOB": dateOfBirth,
-  //         // "Phone Number":phoneNumber,
-  //         "imageLink": imageLink,
-  //         "searchName": searchName(name),
-  //         "status": "offline",
-  //         "reward": 0
-  //         // 'Password':password
-  //       }).whenComplete(() {
-  //         // Customdialog.closeDialog(context);
-  //         Navigator.of(context).pop();
-  //         print(
-  //             "--------------------------------------------------------------------------------------------------------");
-  //         print(
-  //             "------------------------------------------------------------------------");
+        firebaseFirestore
+            .collection('users')
+            .doc(firebaseAuth.currentUser!.uid)
+            .set({
+          "id": firebaseAuth.currentUser!.uid,
+          'UserName': name,
+          'Email': email,
+          "DOB": dateOfBirth,
+          // "Phone Number":phoneNumber,
+          "imageLink": imageLink,
+          "searchName": searchName(name),
+          "status": "offline",
+          "reward": 0
+          // 'Password':password
+        }).whenComplete(() {
+          // Customdialog.closeDialog(context);
+          Navigator.of(context).pop();
+          print(
+              "--------------------------------------------------------------------------------------------------------");
+          print(
+              "------------------------------------------------------------------------");
 
-  //         print(
-  //             "--------------------------------------------------------------------------------------------------------");
-  //         print(
-  //             "------------------------------------------------------------------------");
+          print(
+              "--------------------------------------------------------------------------------------------------------");
+          print(
+              "------------------------------------------------------------------------");
 
-  //         Navigator.pushAndRemoveUntil(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => SignUpNextScreen()),
-  //             (route) => false);
-  //       });
-  //     }).catchError((onError) {
-  //       throw onError;
-  //     });
-  //   } on FirebaseAuthException catch (e) {
-  //     Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => BottomNavBar()),
+              (route) => false);
+        });
+      }).catchError((onError) {
+        throw onError;
+      });
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
 
-  //     Customdialog.showBox(context, e.toString());
-  //   }
-  // }
+      Customdialog.showBox(context, e.toString());
+    }
+  }
 
   Future<String> loginUpUser({
     required String email,
@@ -175,47 +183,47 @@ class AuthUtils {
 //Search User
 
 //Register
-  Future<String> signUpUser({
-    required String email,
-    required String pass,
-    required String dateofbirth,
-    required String username,
-    required String status,
-    required String searchName,
-    String? gender,
-    required int reward,
-    required Uint8List file,
-  }) async {
-    String res = 'Some error occured';
-    try {
-      if (email.isNotEmpty ||
-          pass.isNotEmpty ||
-          dateofbirth.isNotEmpty ||
-          username.isNotEmpty) {
-        UserCredential cred = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: email, password: pass);
-        String imageLink = await StorageMethods()
-            .uploadImageToStorage('ProfilePics', file, false);
-        //Add User to the database with modal
-        UserModel userModel = UserModel(
-            UserName: username,
-            id: cred.user!.uid,
-            Email: email,
-            imageLink: imageLink,
-            status: "online",
-            DOB: dateofbirth,
-            gender: gender!,
-            reward: reward,
-            searchName: searchName);
-        await firebaseFirestore
-            .collection('users')
-            .doc(cred.user!.uid)
-            .set(userModel.toJson());
-        res = 'sucess';
-      }
-    } catch (e) {
-      res = e.toString();
-    }
-    return res;
-  }
+  // Future<String> signUpUser({
+  //   required String email,
+  //   required String pass,
+  //   required String dateofbirth,
+  //   required String username,
+  //   required String status,
+  //   required final searchName,
+  //   String? gender,
+  //   required int reward,
+  //   required Uint8List file,
+  // }) async {
+  //   String res = 'Some error occured';
+  //   try {
+  //     if (email.isNotEmpty ||
+  //         pass.isNotEmpty ||
+  //         dateofbirth.isNotEmpty ||
+  //         username.isNotEmpty) {
+  //       UserCredential cred = await FirebaseAuth.instance
+  //           .createUserWithEmailAndPassword(email: email, password: pass);
+  //       String imageLink = await StorageMethods()
+  //           .uploadImageToStorage('ProfilePics', file, false);
+  //       //Add User to the database with modal
+  //       UserModel userModel = UserModel(
+  //           UserName: username,
+  //           id: cred.user!.uid,
+  //           Email: email,
+  //           imageLink: imageLink,
+  //           status: "online",
+  //           DOB: dateofbirth,
+  //           gender: gender!,
+  //           reward: reward,
+  //           searchName: searchName);
+  //       await firebaseFirestore
+  //           .collection('users')
+  //           .doc(cred.user!.uid)
+  //           .set(userModel.toJson());
+  //       res = 'sucess';
+  //     }
+  //   } catch (e) {
+  //     res = e.toString();
+  //   }
+  //   return res;
+  // }
 }

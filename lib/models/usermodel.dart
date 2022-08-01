@@ -8,7 +8,7 @@ class UserModel {
   String DOB;
   int reward;
   String status;
-  String searchName;
+  final searchName;
   String gender;
 
   UserModel(
