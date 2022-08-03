@@ -146,7 +146,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       MainButton(
                         title: "Sign up and let's get started",
                         onPress: () {
-                          if (formKey.currentState!.validate()) {
+                          if (formKey.currentState!.validate() &&
+                              pwdController.text == rePwdController.text &&
+                              emailController.text.isNotEmpty) {
                             Customdialog.showDialogBox(context);
                             AuthUtils().registerUser(
                                 userController.text,

@@ -132,7 +132,7 @@ class AuthUtils {
               "--------------------------------------------------------------------------------------------------------");
           print(
               "------------------------------------------------------------------------");
-
+            
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => BottomNavBar()),

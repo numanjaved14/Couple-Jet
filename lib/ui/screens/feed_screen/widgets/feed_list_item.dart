@@ -79,17 +79,25 @@ class _FeedListItemState extends State<FeedListItem> {
             SizedBox(
               height: 12 * heightScale,
             ),
-            PostImageSlider(
-              imgList: [
-                widget.snap['postUrl'].toString(),
-              ],
-              likeCount: widget.snap['likes'].length,
-              onLikeTap: () async {
+            GestureDetector(
+              onDoubleTap: () async {
                 await FireStoreMethods().likePost(
                     widget.snap['postId'],
                     FirebaseAuth.instance.currentUser!.uid,
                     widget.snap['likes']);
               },
+              child: PostImageSlider(
+                imgList: [
+                  widget.snap['postUrl'].toString(),
+                ],
+                likeCount: widget.snap['likes'].length,
+                onLikeTap: () async {
+                  await FireStoreMethods().likePost(
+                      widget.snap['postId'],
+                      FirebaseAuth.instance.currentUser!.uid,
+                      widget.snap['likes']);
+                },
+              ),
             ),
 
             // LikeAnimation(
