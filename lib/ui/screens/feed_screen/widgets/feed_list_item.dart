@@ -2,11 +2,12 @@ import 'package:couple_jet/ui/reusable/card_container.dart';
 import 'package:couple_jet/ui/reusable/post_image_slider.dart';
 import 'package:couple_jet/ui/reusable/profile_image.dart';
 import 'package:couple_jet/utils/firestore_methods.dart';
+import 'package:couple_jet/utils/like_animations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class FeedListItem extends StatelessWidget {
+class FeedListItem extends StatefulWidget {
   var snap;
   FeedListItem({
     Key? key,
@@ -14,7 +15,14 @@ class FeedListItem extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<FeedListItem> createState() => _FeedListItemState();
+}
+
+class _FeedListItemState extends State<FeedListItem> {
+  @override
   Widget build(BuildContext context) {
+    bool isLIkeAnimating = false;
+
     final double widthScale = MediaQuery.of(context).size.width / 414;
     final double heightScale = MediaQuery.of(context).size.height / 896;
     return CardContainer(
@@ -35,7 +43,7 @@ class FeedListItem extends StatelessWidget {
                     children: [
                       ProfileImage(
                         radius: 17.5,
-                        profileImg: snap['profImage'].toString(),
+                        profileImg: widget.snap['profImage'].toString(),
                         onPress: () {},
                       ),
                       SizedBox(
@@ -45,7 +53,7 @@ class FeedListItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            snap['username'].toString(),
+                            widget.snap['username'].toString(),
                             style: GoogleFonts.outfit(
                                 fontSize: 15 * widthScale,
                                 fontWeight: FontWeight.bold),
@@ -73,19 +81,48 @@ class FeedListItem extends StatelessWidget {
             ),
             PostImageSlider(
               imgList: [
-                snap['postUrl'].toString(),
+                widget.snap['postUrl'].toString(),
               ],
-              likeCount: snap['likes'].length,
-              onLikeTap: () {
+              likeCount: widget.snap['likes'].length,
+              onLikeTap: () async {
+                await FireStoreMethods().likePost(
+                    widget.snap['postId'],
+                    FirebaseAuth.instance.currentUser!.uid,
+                    widget.snap['likes']);
               },
             ),
+
+            // LikeAnimation(
+            //   isAnimating: widget.snap['likes'].contains(
+            //     FirebaseAuth.instance.currentUser!.uid,
+            //   ),
+            //   smallLike: true,
+            //   child: IconButton(
+            //     onPressed: () async {
+            //       await FireStoreMethods().likePost(
+            //           widget.snap['postId'],
+            //           FirebaseAuth.instance.currentUser!.uid,
+            //           widget.snap['likes']);
+            //     },
+            //     icon: widget.snap['likes']
+            //             .contains(FirebaseAuth.instance.currentUser!.uid)
+            //         ? Icon(
+            //             Icons.favorite,
+            //             color: Colors.red,
+            //           )
+            //         : Icon(
+            //             Icons.favorite,
+            //             color: Colors.black,
+            //           ),
+            //   ),
+            // ),
             Padding(
               padding: EdgeInsets.only(
                   top: 11 * heightScale,
                   left: 10 * widthScale,
                   right: 10 * widthScale),
               child: Text(
-                snap['description'].toString(),
+                widget.snap['description'].toString(),
                 style: GoogleFonts.outfit(
                     fontSize: 12 * widthScale,
                     color: Theme.of(context).iconTheme.color!.withOpacity(0.7)),
