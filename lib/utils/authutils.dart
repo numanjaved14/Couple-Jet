@@ -89,21 +89,24 @@ class AuthUtils {
     return null;
   }
 
-  registerUser(
-    String name,
-    String email,
-    String password,
-    Uint8List file,
-    String dateOfBirth,
-    String gender,
-    BuildContext context,
-  ) async {
+  registerUser({
+    required String name,
+    required String email,
+    required String password,
+    required Uint8List file,
+    required String dateOfBirth,
+    required String gender,
+    int? age,
+    required BuildContext context,
+  }) async {
     try {
       await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) async {
         String imageLink = await StorageMethods()
             .uploadImageToStorage('ProfilePics', file, false);
+
+        List interests = [];
 
         firebaseFirestore
             .collection('users')
@@ -118,7 +121,11 @@ class AuthUtils {
           "imageLink": imageLink,
           "searchName": searchName(name),
           "status": "offline",
-          "reward": 0
+          "reward": 0,
+          "age": age,
+          "interests": interests,
+          "country": '',
+          "ZIPcode": '',
           // 'Password':password
         }).whenComplete(() {
           // Customdialog.closeDialog(context);
@@ -132,7 +139,7 @@ class AuthUtils {
               "--------------------------------------------------------------------------------------------------------");
           print(
               "------------------------------------------------------------------------");
-            
+
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => BottomNavBar()),
@@ -140,6 +147,55 @@ class AuthUtils {
         });
       }).catchError((onError) {
         throw onError;
+      });
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+
+      Customdialog.showBox(context, e.toString());
+    }
+  }
+
+  updateUser({
+    required String name,
+    required String dateOfBirth,
+    required String gender,
+    required String ZIP,
+    required String country,
+    required List interests,
+    int? age,
+    required BuildContext context,
+  }) async {
+    try {
+      firebaseFirestore
+          .collection('users')
+          .doc(firebaseAuth.currentUser!.uid)
+          .update({
+        "gender": gender,
+        'UserName': name,
+        "DOB": dateOfBirth,
+        // "Phone Number":phoneNumber,
+        "age": age,
+        "interests": interests,
+        "country": country,
+        "ZIPcode": ZIP,
+        // 'Password':password
+      }).whenComplete(() {
+        // Customdialog.closeDialog(context);
+        Navigator.of(context).pop();
+        print(
+            "--------------------------------------------------------------------------------------------------------");
+        print(
+            "------------------------------------------------------------------------");
+
+        print(
+            "--------------------------------------------------------------------------------------------------------");
+        print(
+            "------------------------------------------------------------------------");
+
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => BottomNavBar()),
+            (route) => false);
       });
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);

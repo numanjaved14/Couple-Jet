@@ -6,7 +6,6 @@ import 'package:couple_jet/ui/reusable/main_text_field.dart';
 import 'package:couple_jet/ui/reusable/social_login_button.dart';
 import 'package:couple_jet/ui/reusable/title_text.dart';
 import 'package:couple_jet/ui/reusable/top_app_bar.dart';
-import 'package:couple_jet/ui/screens/bottom_nav_bar/bottom_nav_bar.dart';
 import 'package:couple_jet/utils/authutils.dart';
 import 'package:couple_jet/utils/colors.dart';
 import 'package:couple_jet/utils/constant.dart';
@@ -15,6 +14,7 @@ import 'package:couple_jet/utils/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class SignUpScreen extends StatefulWidget {
   SignUpScreen({Key? key}) : super(key: key);
@@ -37,6 +37,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
   Uint8List? _image;
   bool _isLoading = false;
+
+  var gender = ['Male', 'Female', 'Trans'];
+
+  String dropdownvalue = 'Male';
+
+  int age = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -80,14 +86,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       'https://static.remove.bg/remove-bg-web/a6eefcd21dff1bbc2448264c32f7b48d7380cb17/assets/start_remove-c851bdf8d3127a24e2d137a55b1b427378cd17385b01aec6e59d5d4b5f39d2ec.png'),
                                 ),
                           Positioned(
-                              bottom: -10,
-                              left: 70,
-                              child: IconButton(
-                                  onPressed: () => selectImage(),
-                                  icon: Icon(
-                                    Icons.add_a_photo,
-                                    color: Colors.white,
-                                  )))
+                            bottom: -10,
+                            left: 70,
+                            child: IconButton(
+                              onPressed: () => selectImage(),
+                              icon: Icon(
+                                Icons.add_a_photo,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -143,25 +151,65 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       SizedBox(
                         height: 35 * heightScale,
                       ),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black)),
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        child: Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            value: dropdownvalue,
+                            items: gender.map((String items) {
+                              return DropdownMenuItem(
+                                value: items,
+                                child: Text(items),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                value = dropdownvalue;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 35 * heightScale,
+                      ),
                       MainButton(
                         title: "Sign up and let's get started",
-                        onPress: () {
-                          if (formKey.currentState!.validate() &&
-                              pwdController.text == rePwdController.text &&
-                              emailController.text.isNotEmpty) {
-                            Customdialog.showDialogBox(context);
-                            AuthUtils().registerUser(
-                                userController.text,
-                                emailController.text,
-                                pwdController.text,
-                                _image!,
-                                "Male",
-                                dobController.text,
-                                context);
-                          }
-//                               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  SignUpNextScreen()), (route) => false);
-                        },
-                      )
+                        onPress: age <= 16
+                            ? () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Your age must be more than 16 years to sign up!'),
+                                    duration: Duration(
+                                      seconds: 4,
+                                    ),
+                                  ),
+                                );
+                              }
+                            : () {
+                                if (formKey.currentState!.validate() &&
+                                    pwdController.text ==
+                                        rePwdController.text &&
+                                    emailController.text.isNotEmpty) {
+                                  Customdialog.showDialogBox(context);
+                                  AuthUtils().registerUser(
+                                    context: context,
+                                    dateOfBirth: dobController.text,
+                                    email: emailController.text,
+                                    file: _image!,
+                                    gender: dropdownvalue,
+                                    name: userController.text,
+                                    password: pwdController.text,
+                                    age: age,
+                                  );
+                                }
+                              },
+                      ),
                     ],
                   ),
                 )),
@@ -226,10 +274,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         minTime: DateTime(1900, 3, 5),
         maxTime: DateTime.now(), onChanged: (date) {
-      dobController.text = date.toString();
+      calculateAge(date);
+      dobController.text = DateFormat.yMd().format(date);
     }, onConfirm: (date) {
-      dobController.text = date.toString();
+      dobController.text = DateFormat.yMd().format(date);
     }, currentTime: DateTime.now(), locale: LocaleType.en);
+  }
+
+  calculateAge(DateTime birthDate) {
+    DateTime currentDate = DateTime.now();
+    age = currentDate.year - birthDate.year;
+    int month1 = currentDate.month;
+    int month2 = birthDate.month;
+    if (month2 > month1) {
+      age--;
+    } else if (month1 == month2) {
+      int day1 = currentDate.day;
+      int day2 = birthDate.day;
+      if (day2 > day1) {
+        age--;
+      }
+    }
+    setState(() {
+      age;
+    });
+    debugPrint("....................." + age.toString());
+    return age;
   }
 
   // void registerUser() async {
