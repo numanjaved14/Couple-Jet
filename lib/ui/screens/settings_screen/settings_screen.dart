@@ -3,6 +3,7 @@ import 'package:couple_jet/ui/reusable/card_container.dart';
 import 'package:couple_jet/ui/reusable/main_button.dart';
 import 'package:couple_jet/ui/reusable/title_text.dart';
 import 'package:couple_jet/ui/reusable/top_app_bar.dart';
+import 'package:couple_jet/ui/screens/login_screen/login_screen.dart';
 import 'package:couple_jet/ui/screens/my_profile_screen/widgets/gender_card.dart';
 import 'package:couple_jet/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -349,6 +350,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           'Delete account',
                           style: GoogleFonts.outfit(
                               fontSize: 12 * widthScale, color: Colors.red),
+                        )),
+                    SizedBox(
+                      height: 24 * heightScale,
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          _logout(context);
+                        },
+                        child: Text(
+                          'Logout',
+                          style: GoogleFonts.outfit(
+                              fontSize: 12 * widthScale, color: Colors.red),
                         ))
                   ])),
               SizedBox(
@@ -381,7 +394,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   FirebaseFirestore.instance
                       .collection("users")
                       .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .delete();
+                      .delete()
+                      .then((value) => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => LoginScreen()))
+                          });
+                });
+
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _logout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text('Please Confirm'),
+          content: const Text(
+            'Are you sure to logout your account',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+          ),
+          actions: [
+            // The "Yes" button
+            TextButton(
+              onPressed: () {
+                // Remove the box
+                setState(() {
+                  FirebaseAuth.instance.signOut().then((value) => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (builder) => LoginScreen()))
+                      });
                 });
 
                 // Close the dialog
