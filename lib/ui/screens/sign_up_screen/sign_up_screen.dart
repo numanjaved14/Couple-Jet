@@ -153,6 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 emailController.text,
                                 pwdController.text,
                                 _image!,
+                                "Male",
                                 dobController.text,
                                 context);
                           }

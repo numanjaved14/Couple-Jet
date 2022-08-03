@@ -1,6 +1,8 @@
 import 'package:couple_jet/ui/reusable/card_container.dart';
 import 'package:couple_jet/ui/reusable/post_image_slider.dart';
 import 'package:couple_jet/ui/reusable/profile_image.dart';
+import 'package:couple_jet/utils/firestore_methods.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -74,7 +76,8 @@ class FeedListItem extends StatelessWidget {
                 snap['postUrl'].toString(),
               ],
               likeCount: snap['likes'].length,
-              onLikeTap: () {},
+              onLikeTap: () {
+              },
             ),
             Padding(
               padding: EdgeInsets.only(

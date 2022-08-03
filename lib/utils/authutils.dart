@@ -46,6 +46,7 @@ class AuthUtils {
           .doc(firebaseAuth.currentUser!.uid)
           .set({
         "id": firebaseAuth.currentUser!.uid,
+        "gender": gender,
         'UserName': userName,
         'Email': email,
         "DOB": dob,
@@ -94,6 +95,7 @@ class AuthUtils {
     String password,
     Uint8List file,
     String dateOfBirth,
+    String gender,
     BuildContext context,
   ) async {
     try {
@@ -108,6 +110,7 @@ class AuthUtils {
             .doc(firebaseAuth.currentUser!.uid)
             .set({
           "id": firebaseAuth.currentUser!.uid,
+          "gender": gender,
           'UserName': name,
           'Email': email,
           "DOB": dateOfBirth,
